@@ -4,37 +4,27 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form'
+import { Form } from '@/components/ui/form'
 
 import { InputWithLabel } from '@/components/inputs/InputWithLabel'
-import { BackButton } from '@/components/shared/BackButton'
-import { Input } from '@/components/ui/input'
-
-const FormSchema = z.object({
-  username: z.string().min(2, {
-    message: 'Username must be at least 2 characters.'
-  })
-})
+import { TextAreaWithLabel } from '@/components/inputs/TeaxAreaWithLabel'
+import { InvoiceSchema } from '@/zod-schemas/invoice'
 
 export default function NewInvoiceForm() {
   // 1. Define your form.
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<z.infer<typeof InvoiceSchema>>({
+    mode: 'onBlur',
+    resolver: zodResolver(InvoiceSchema),
     defaultValues: {
-      username: ''
+      name: '',
+      email: ' ',
+      value: '',
+      description: ''
     }
   })
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof FormSchema>) {
+  function onSubmit(values: z.infer<typeof InvoiceSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values)
@@ -46,24 +36,17 @@ export default function NewInvoiceForm() {
           onSubmit={form.handleSubmit(onSubmit)}
           className='mt-6 w-[600px] space-y-8'
         >
-          {/* <FormField
-            control={form.control}
-            name='username'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input placeholder='shadcn' {...field} />
-                </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
-          <InputWithLabel fieldTitle='Username' nameInSchema='username' />
-          <Button type='submit'>Submit</Button>
+          <InputWithLabel fieldTitle='Name' nameInSchema='name' />
+          <InputWithLabel fieldTitle='Email' nameInSchema='email' />
+          <InputWithLabel fieldTitle='Value' nameInSchema='value' />
+          <TextAreaWithLabel
+            fieldTitle='Description'
+            nameInSchema='description'
+            className='h-[152px]'
+          />
+          <Button type='submit' className='w-full font-semibold'>
+            Submit
+          </Button>
         </form>
       </Form>
     </div>
