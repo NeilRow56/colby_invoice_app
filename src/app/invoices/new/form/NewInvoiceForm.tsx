@@ -10,24 +10,27 @@ import { InputWithLabel } from '@/components/inputs/InputWithLabel'
 import { TextAreaWithLabel } from '@/components/inputs/TeaxAreaWithLabel'
 import { InvoiceSchema } from '@/zod-schemas/invoice'
 
+import { useTransition } from 'react'
+
 export default function NewInvoiceForm() {
+  const [isPending, startTransition] = useTransition()
   // 1. Define your form.
   const form = useForm<z.infer<typeof InvoiceSchema>>({
     mode: 'onBlur',
     resolver: zodResolver(InvoiceSchema),
     defaultValues: {
       name: '',
-      email: ' ',
-      value: '',
+      email: '',
+      value: 0,
       description: ''
     }
   })
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof InvoiceSchema>) {
+  function onSubmit(formData: z.infer<typeof InvoiceSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values)
+    console.log(formData)
   }
   return (
     <div className='rounded-lg border p-4'>
