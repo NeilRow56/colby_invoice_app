@@ -41,7 +41,7 @@ export default async function DashboardPage() {
         <TableCaption>A list of your recent invoices.</TableCaption>
         <TableHeader>
           <TableRow className='bg-slate-200'>
-            {/* <TableHead className='w-[150px] p-4'>Date</TableHead> */}
+            <TableHead className='w-[150px] p-4'>Date</TableHead>
             <TableHead className='p-4'>Description</TableHead>
             {/* <TableHead className='p-4'>Email</TableHead> */}
             <TableHead className='p-4 text-center'>Status</TableHead>
@@ -51,29 +51,48 @@ export default async function DashboardPage() {
         <TableBody>
           {results.map(result => (
             <TableRow key={result.id}>
-              <TableCell className='p-4 text-left'>
-                <span className='font-semibold'>{result.description}</span>
+              <TableCell className='p-0 text-left font-medium'>
+                <Link
+                  href={`/invoices/${result.id}`}
+                  className='block p-4 font-semibold'
+                >
+                  {new Date(result.createTimeStamp).toLocaleDateString('en-GB')}
+                </Link>
               </TableCell>
-              {/* <TableCell className='p-4 text-left font-medium'>
-                <span className='font-semibold'>{invoice.customer}</span>
+              <TableCell className='p-0 text-left'>
+                <Link
+                  href={`/invoices/${result.id}`}
+                  className='block p-4 font-semibold'
+                >
+                  {result.description}
+                </Link>
               </TableCell>
-              <TableCell className='p-4 text-left'>
-                <span className=''>{invoice.email}</span>
+
+              {/* <TableCell className='block p-4 text-left p-0'>
+                <Link className=''>{invoice.email}</Link>
               </TableCell> */}
-              <TableCell className='justify-center p-4'>
-                <span className='font-semibold'>
+              <TableCell className='justify-center p-0'>
+                <Link
+                  href={`/invoices/${result.id}`}
+                  className='block p-4 font-semibold'
+                >
                   <Badge className='rounded-full'>{result.status}</Badge>
-                </span>
+                </Link>
               </TableCell>
-              <TableCell className='p-4 text-right'>
-                <span className='font-semibold'>£{result.value / 100}</span>
+              <TableCell className='text-right'>
+                <Link
+                  href={`/invoices/${result.id}`}
+                  className='block p-4 font-semibold'
+                >
+                  £{(result.value / 100).toFixed(2)}
+                </Link>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell className='pl-3 text-left' colSpan={2}>
+            <TableCell className='p-0 pl-3 text-left' colSpan={3}>
               Total
             </TableCell>
             <TableCell className='pr-4 text-right'>£13,970.00</TableCell>
