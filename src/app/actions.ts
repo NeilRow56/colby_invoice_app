@@ -2,6 +2,7 @@
 
 import { db } from '@/db'
 import { Invoices } from '@/db/schema'
+import { redirect } from 'next/navigation'
 
 //Create invoice
 export async function createAction(formData: FormData) {
@@ -12,9 +13,15 @@ export async function createAction(formData: FormData) {
   //   const name = formData.get('name') as string
   //   const email = formData.get('email') as string
 
-  await db.insert(Invoices).values({
-    value,
-    description,
-    status: 'open'
-  })
+  const results = await db
+    .insert(Invoices)
+    .values({
+      value,
+      description,
+      status: 'open'
+    })
+    .returning({
+      id: Invoices.id
+    })
+  redirect(`/invoices/${results[0].id}`)
 }

@@ -1,19 +1,30 @@
-import React from 'react'
+'use client'
+
+import React, { SyntheticEvent, useState, startTransition } from 'react'
 import { sql } from 'drizzle-orm'
 import { db } from '@/db'
+import Form from 'next/form'
 
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 
 import { BackButton } from '@/components/shared/BackButton'
-import { Form } from '@/components/ui/form'
+// import { Form } from '@/components/ui/form'
 import { createAction } from '@/app/actions'
 import SubmitButton from '@/components/shared/SubmitButton'
 import Container from '@/components/shared/Container'
 // import NewInvoiceForm from './form/NewInvoiceForm'
 
-export default async function NewInvoicePage() {
+export default function NewInvoicePage() {
+  const [state, setState] = useState('ready')
+  async function handleOnSubmit(event: SyntheticEvent) {
+    if (state === 'pending') {
+      event.preventDefault()
+      return
+    }
+    setState('pending')
+  }
   return (
     <div className='mx-auto flex flex-col justify-center p-6'>
       <span className='mt-6'>
@@ -29,7 +40,11 @@ export default async function NewInvoicePage() {
 
         {/* <NewInvoiceForm /> */}
         <Container className=''>
-          <form action={createAction} className='grid max-w-5xl gap-4'>
+          <Form
+            action={createAction}
+            onSubmit={handleOnSubmit}
+            className='grid max-w-5xl gap-4'
+          >
             <div>
               <Label
                 htmlFor='name'
@@ -69,7 +84,7 @@ export default async function NewInvoicePage() {
             <div>
               <SubmitButton />
             </div>
-          </form>
+          </Form>
         </Container>
       </div>
     </div>
