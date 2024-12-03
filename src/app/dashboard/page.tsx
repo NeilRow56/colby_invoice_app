@@ -15,6 +15,7 @@ import Link from 'next/link'
 
 import { db } from '@/db'
 import { Invoices } from '@/db/schema'
+import { cn } from '@/lib/utils'
 
 export default async function DashboardPage() {
   const results = await db.select().from(Invoices)
@@ -76,7 +77,17 @@ export default async function DashboardPage() {
                   href={`/invoices/${result.id}`}
                   className='block p-4 font-semibold'
                 >
-                  <Badge className='rounded-full'>{result.status}</Badge>
+                  <Badge
+                    className={cn(
+                      'rounded-full bg-green-500 capitalize',
+                      result.status === 'open' && 'bg-blue-500',
+                      result.status === 'paid' && 'bg-green-600',
+                      result.status === 'void' && 'bg-zinc-500',
+                      result.status === 'uncollectible' && 'bg-red-600'
+                    )}
+                  >
+                    {result.status}
+                  </Badge>
                 </Link>
               </TableCell>
               <TableCell className='text-right'>
