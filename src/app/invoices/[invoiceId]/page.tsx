@@ -4,6 +4,7 @@ import { Invoices } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import { notFound } from 'next/navigation'
 
 export default async function IndividualInvoicePage({
   params
@@ -13,6 +14,12 @@ export default async function IndividualInvoicePage({
   // covert invoiceId from string to number as id is an interger in schema
 
   const requiredId = (await params).invoiceId
+  const isNumberRegX = /^\d+$/
+
+  // Check if the input is empty or not a number
+  if (!isNumberRegX.test(requiredId)) {
+    throw new Error('Invalid ID')
+  }
 
   const invoiceId = parseInt(requiredId)
 
@@ -23,6 +30,10 @@ export default async function IndividualInvoicePage({
     .limit(1)
   // code to temporarily check status css color is working
   //   result.status = 'uncollectible'
+
+  if (!result) {
+    notFound()
+  }
 
   return (
     <div className='mx-auto my-12 max-w-5xl'>
