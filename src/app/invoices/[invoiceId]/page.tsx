@@ -1,17 +1,24 @@
 import React from 'react'
 import { db } from '@/db'
 import { Invoices } from '@/db/schema'
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { notFound } from 'next/navigation'
 import Container from '@/components/shared/Container'
+import { auth } from '@clerk/nextjs/server'
 
 export default async function IndividualInvoicePage({
   params
 }: {
   params: { invoiceId: string }
 }) {
+  const { userId } = await auth()
+
+  if (!userId) {
+    return
+  }
+
   // covert invoiceId from string to number as id is an interger in schema
 
   const requiredId = (await params).invoiceId
@@ -27,8 +34,9 @@ export default async function IndividualInvoicePage({
   const [result] = await db
     .select()
     .from(Invoices)
-    .where(eq(Invoices.id, invoiceId))
+    .where(and(eq(Invoices.id, invoiceId), eq(Invoices.userId, userId)))
     .limit(1)
+
   // code to temporarily check status css color is working
   //   result.status = 'uncollectible'
 
@@ -37,7 +45,7 @@ export default async function IndividualInvoicePage({
   }
 
   return (
-    <main className='h-full'>
+    <main className='h-full w-full'>
       <Container>
         <div className='mb-8 flex items-center gap-4'>
           <h1 className='text-left text-3xl font-bold'>Invoice {invoiceId}</h1>
