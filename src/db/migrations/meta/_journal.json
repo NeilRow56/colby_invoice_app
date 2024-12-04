@@ -15,6 +15,20 @@
       "when": 1733227144114,
       "tag": "0001_damp_vanisher",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1733295215339,
+      "tag": "0002_wooden_hellion",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1733303527620,
+      "tag": "0003_gorgeous_stranger",
+      "breakpoints": true
     }
   ]
 }

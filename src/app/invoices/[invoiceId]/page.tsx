@@ -1,25 +1,19 @@
-import React from 'react'
-import { db } from '@/db'
-import { Invoices } from '@/db/schema'
-import { and, eq } from 'drizzle-orm'
-
+import { auth } from '@clerk/nextjs/server'
+import { and, eq, isNull } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 
-import { auth } from '@clerk/nextjs/server'
+import { db } from '@/db'
+import { Customers, Invoices } from '@/db/schema'
 import Invoice from './Invoice'
 
-export default async function IndividualInvoicePage({
+export default async function InvoicePage({
   params
 }: {
   params: { invoiceId: string }
 }) {
   const { userId } = await auth()
 
-  if (!userId) {
-    return
-  }
-
-  // covert invoiceId from string to number as id is an interger in schema
+  if (!userId) return
 
   const requiredId = (await params).invoiceId
   const isNumberRegX = /^\d+$/
@@ -31,21 +25,23 @@ export default async function IndividualInvoicePage({
 
   const invoiceId = parseInt(requiredId)
 
+  // Displaying all invoices for public demo
+
   const [result] = await db
     .select()
     .from(Invoices)
+    .innerJoin(Customers, eq(Invoices.customerId, Customers.id))
     .where(and(eq(Invoices.id, invoiceId), eq(Invoices.userId, userId)))
     .limit(1)
-
-  // code to temporarily check status css color is working
-  //   result.status = 'uncollectible'
 
   if (!result) {
     notFound()
   }
 
-  // const invoice = {
-  //   ...result.invoices,
+  const invoice = {
+    ...result.invoices,
+    customer: result.customers
+  }
 
-  return <Invoice invoice={result} />
+  return <Invoice invoice={invoice} />
 }

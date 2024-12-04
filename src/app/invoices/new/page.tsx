@@ -39,7 +39,7 @@ export default function NewInvoicePage() {
         <Form
           action={createAction}
           onSubmit={handleOnSubmit}
-          className='mx-auto grid max-w-xs'
+          className='mx-auto grid max-w-xs gap-4'
         >
           <div>
             <Label htmlFor='name' className='mb-2 block text-sm font-semibold'>
@@ -68,7 +68,7 @@ export default function NewInvoicePage() {
             </Label>
             <Textarea id='description' name='description' />
           </div>
-          <div>
+          <div className='mt-4'>
             <SubmitButton />
           </div>
         </Form>

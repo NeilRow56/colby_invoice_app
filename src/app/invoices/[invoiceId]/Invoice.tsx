@@ -18,7 +18,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import type { Invoices } from '@/db/schema'
+import type { Customers, Invoices } from '@/db/schema'
 import { cn } from '@/lib/utils'
 
 import { Button } from '@/components/ui/button'
@@ -29,13 +29,13 @@ import Link from 'next/link'
 import Container from '@/components/shared/Container'
 
 interface InvoiceProps {
-  // Infer types from schema definition
-  invoice: typeof Invoices.$inferSelect
+  invoice: typeof Invoices.$inferSelect & {
+    customer: typeof Customers.$inferSelect
+  }
 }
 
 export default function Invoice({ invoice }: InvoiceProps) {
   const [currentStatus, setCurrentStatus] = useOptimistic(
-    // initial status
     invoice.status,
     (_state, newStatus) => {
       return String(newStatus)
@@ -89,7 +89,13 @@ export default function Invoice({ invoice }: InvoiceProps) {
                       <form action={handleOnUpdateStatus}>
                         <input type='hidden' name='id' value={invoice.id} />
                         <input type='hidden' name='status' value={status.id} />
-                        <button type='submit'>{status.label}</button>
+                        <Button
+                          className='block w-[120px] text-center text-primary'
+                          type='submit'
+                          variant='outline'
+                        >
+                          {status.label}
+                        </Button>
                       </form>
                     </DropdownMenuItem>
                   )
@@ -162,7 +168,7 @@ export default function Invoice({ invoice }: InvoiceProps) {
           </div>
         </div>
 
-        <p className='mb-3 text-3xl'>£{(invoice.value / 100).toFixed(2)}</p>
+        <p className='mb-3 text-3xl'>${(invoice.value / 100).toFixed(2)}</p>
 
         <p className='mb-8 text-lg'>{invoice.description}</p>
 
@@ -187,13 +193,13 @@ export default function Invoice({ invoice }: InvoiceProps) {
             <strong className='block w-28 flex-shrink-0 text-sm font-medium'>
               Billing Name
             </strong>
-            <span>Name</span>
+            <span>{invoice.customer.name}</span>
           </li>
           <li className='flex gap-4'>
             <strong className='block w-28 flex-shrink-0 text-sm font-medium'>
               Billing Email
             </strong>
-            <span>Email</span>
+            <span>{invoice.customer.email}</span>
           </li>
         </ul>
       </Container>
