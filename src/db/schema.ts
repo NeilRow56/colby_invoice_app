@@ -9,6 +9,7 @@ import {
 
 import { AVAILABLE_STATUSES } from '@/data/invoices'
 
+// [number] equals position in array
 export type Status = (typeof AVAILABLE_STATUSES)[number]['id']
 
 const statuses = AVAILABLE_STATUSES.map(({ id }) => id) as Array<Status>
