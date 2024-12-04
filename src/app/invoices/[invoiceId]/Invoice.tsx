@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils'
 
 import { Button } from '@/components/ui/button'
 
-import { updateStatusAction } from '@/app/actions'
+import { deleteInvoiceAction, updateStatusAction } from '@/app/actions'
 import { AVAILABLE_STATUSES } from '@/data/invoices'
 import Link from 'next/link'
 import Container from '@/components/shared/Container'
@@ -35,6 +35,7 @@ interface InvoiceProps {
 
 export default function Invoice({ invoice }: InvoiceProps) {
   const [currentStatus, setCurrentStatus] = useOptimistic(
+    // initial status
     invoice.status,
     (_state, newStatus) => {
       return String(newStatus)
@@ -140,7 +141,10 @@ export default function Invoice({ invoice }: InvoiceProps) {
                     your invoice and remove your data from our servers.
                   </DialogDescription>
                   <DialogFooter>
-                    <form className='flex justify-center'>
+                    <form
+                      className='flex justify-center'
+                      action={deleteInvoiceAction}
+                    >
                       <input type='hidden' name='id' value={invoice.id} />
                       <Button
                         variant='destructive'
