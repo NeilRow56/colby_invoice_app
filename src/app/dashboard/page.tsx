@@ -14,7 +14,7 @@ import { CirclePlus } from 'lucide-react'
 import Link from 'next/link'
 
 import { db } from '@/db'
-import { Invoices } from '@/db/schema'
+import { Customers, Invoices } from '@/db/schema'
 import { cn } from '@/lib/utils'
 import Container from '@/components/shared/Container'
 import { auth } from '@clerk/nextjs/server'
@@ -30,7 +30,15 @@ export default async function DashboardPage() {
   const results = await db
     .select()
     .from(Invoices)
+    .innerJoin(Customers, eq(Invoices.customerId, Customers.id))
     .where(eq(Invoices.userId, userId))
+
+  const invoices = results?.map(({ invoices, customers }) => {
+    return {
+      ...invoices,
+      customer: customers
+    }
+  })
 
   return (
     <main className='h-full'>
@@ -54,14 +62,14 @@ export default async function DashboardPage() {
           <TableHeader>
             <TableRow>
               <TableHead className='w-[100px] p-4'>Date</TableHead>
-              {/* <TableHead className="p-4">Customer</TableHead>
-              <TableHead className="p-4">Email</TableHead> */}
+              <TableHead className='p-4'>Customer</TableHead>
+              <TableHead className='p-4'>Email</TableHead>
               <TableHead className='p-4 text-center'>Status</TableHead>
               <TableHead className='p-4 text-right'>Value</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {results.map(result => {
+            {invoices.map(result => {
               return (
                 <TableRow key={result.id}>
                   <TableCell className='p-0 text-left font-medium'>
@@ -72,19 +80,19 @@ export default async function DashboardPage() {
                       {new Date(result.createTimeStamp).toLocaleDateString()}
                     </Link>
                   </TableCell>
-                  {/* <TableCell className="text-left p-0">
+                  <TableCell className='p-0 text-left'>
                     <Link
                       href={`/invoices/${result.id}`}
-                      className="block p-4 font-semibold"
+                      className='block p-4 font-semibold'
                     >
                       {result.customer.name}
                     </Link>
                   </TableCell>
-                  <TableCell className="text-left p-0">
-                    <Link className="block p-4" href={`/invoices/${result.id}`}>
+                  <TableCell className='p-0 text-left'>
+                    <Link className='block p-4' href={`/invoices/${result.id}`}>
                       {result.customer.email}
                     </Link>
-                  </TableCell> */}
+                  </TableCell>
                   <TableCell className='p-0 text-center'>
                     <Link className='block p-4' href={`/invoices/${result.id}`}>
                       <Badge
@@ -105,7 +113,7 @@ export default async function DashboardPage() {
                       href={`/invoices/${result.id}`}
                       className='block p-4 font-semibold'
                     >
-                      ${(result.value / 100).toFixed(2)}
+                      £{(result.value / 100).toFixed(2)}
                     </Link>
                   </TableCell>
                 </TableRow>
